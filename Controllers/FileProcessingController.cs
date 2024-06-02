@@ -34,4 +34,12 @@ public class FileProcessingController : ControllerBase
         }
         return File(decompressedData, "application/octet-stream", originalFileName);
     }
+    
+    [HttpPost("resize")]
+    public async Task<IActionResult> ResizeImage([FromForm] FileData fileData, [FromQuery] int width, [FromQuery] int height)
+    {
+        var resizedData = await _fileProcessingService.ResizeImageAsync(fileData.File, width, height);
+        var resizedFileName = $"{fileData.File.FileName}_resized.png";
+        return File(resizedData, "image/png", resizedFileName);
+    }
 }

@@ -36,4 +36,17 @@ public class FileProcessingService
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsByteArrayAsync();
     }
+    
+    public async Task<byte[]> ResizeImageAsync(IFormFile file, int width, int height)
+    {
+        using var content = new MultipartFormDataContent();
+        using var fileStream = file.OpenReadStream();
+        using var streamContent = new StreamContent(fileStream);
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+        content.Add(streamContent, "file", file.FileName);
+
+        var response = await _httpClient.PostAsync($"http://localhost:8080/resize?width={width}&height={height}", content);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsByteArrayAsync();
+    }
 }
